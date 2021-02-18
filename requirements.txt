@@ -1,5 +1,4 @@
 pyTelegramBotAPI
-Flask
 requests
 telebot
 python-telegram-bot
