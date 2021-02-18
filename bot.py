@@ -22,7 +22,7 @@ def link(update, context):
             mp3_link = config.youtube_link(update.message.text)
 
             yt = YouTube3(mp3_link)
-            print(yt)
+
             filename = "input.webm"
             titl = str(yt.title)[0:35]
             audio = yt.streams.filter(only_audio=True, file_extension="webm")[0]
@@ -41,6 +41,7 @@ def link(update, context):
 
 
         else:
+            print(update.message.chat.id)
             update.message.reply_text(config.help)
 
     except Exception as ex:
@@ -95,10 +96,6 @@ def main():
                           url_path=TOKEN)
     updater.bot.setWebhook("https://radiobot4.herokuapp.com/" + TOKEN)
     updater.idle()
-
-    # while True:
-    #     print( "response",os.system('ping -c 1 ' + "https://radiobot3.herokuapp.com/"))
-    #     time.sleep(20*60)
 
         ##---------------------Webhook_end---------------------
 
