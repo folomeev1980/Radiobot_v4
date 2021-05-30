@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 This module contains all logic necessary to decipher the signature.
 
@@ -17,10 +15,10 @@ signature and decoding it.
 import logging
 import re
 from itertools import chain
-from typing import List, Tuple, Dict, Callable, Any, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from pytube3.exceptions import RegexMatchError
-from pytube3.helpers import regex_search, cache
+from pytube3.helpers import cache, regex_search
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +26,18 @@ logger = logging.getLogger(__name__)
 class Cipher:
     def __init__(self, js: str):
         self.transform_plan: List[str] = get_transform_plan(js)
-        var, _ = self.transform_plan[0].split(".")
+        var_regex = re.compile(r"^\w+\W")
+        var_match = var_regex.search(self.transform_plan[0])
+        if not var_match:
+            raise RegexMatchError(
+                caller="__init__", pattern=var_regex.pattern
+            )
+        var = var_match.group(0)[:-1]
         self.transform_map = get_transform_map(js, var)
-        self.js_func_regex = re.compile(r"\w+\.(\w+)\(\w,(\d+)\)")
+        self.js_func_patterns = [
+            r"\w+\.(\w+)\(\w,(\d+)\)",
+            r"\w+\[(\"\w+\")\]\(\w,(\d+)\)"
+        ]
 
     def get_signature(self, ciphered_signature: str) -> str:
         """Decipher the signature.
@@ -41,7 +48,7 @@ class Cipher:
             The ciphered signature sent in the ``player_config``.
         :rtype: str
         :returns:
-           Decrypted signature required to download the media content.
+            Decrypted signature required to download the media content.
         """
         signature = list(ciphered_signature)
 
@@ -77,16 +84,21 @@ class Cipher:
 
         **Example**:
 
-        >>> parse_function('DE.AJ(a,15)')
+        parse_function('DE.AJ(a,15)')
         ('AJ', 15)
 
         """
         logger.debug("parsing transform function")
-        parse_match = self.js_func_regex.search(js_func)
-        if not parse_match:
-            raise RegexMatchError(caller="parse_function", pattern="js_func_regex")
-        fn_name, fn_arg = parse_match.groups()
-        return fn_name, int(fn_arg)
+        for pattern in self.js_func_patterns:
+            regex = re.compile(pattern)
+            parse_match = regex.search(js_func)
+            if parse_match:
+                fn_name, fn_arg = parse_match.groups()
+                return fn_name, int(fn_arg)
+
+        raise RegexMatchError(
+            caller="parse_function", pattern="js_func_patterns"
+        )
 
 
 def get_initial_function_name(js: str) -> str:
@@ -95,13 +107,13 @@ def get_initial_function_name(js: str) -> str:
         The contents of the base.js asset file.
     :rtype: str
     :returns:
-       Function name from regex match
+        Function name from regex match
     """
 
     function_patterns = [
         r"\b[cs]\s*&&\s*[adf]\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*(?P<sig>[a-zA-Z0-9$]+)\(",  # noqa: E501
         r"\b[a-zA-Z0-9]+\s*&&\s*[a-zA-Z0-9]+\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*(?P<sig>[a-zA-Z0-9$]+)\(",  # noqa: E501
-        r'\b(?P<sig>[a-zA-Z0-9$]{2})\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)',  # noqa: E501
+        r'(?:\b|[^a-zA-Z0-9$])(?P<sig>[a-zA-Z0-9$]{2})\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)',  # noqa: E501
         r'(?P<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)',  # noqa: E501
         r'(["\'])signature\1\s*,\s*(?P<sig>[a-zA-Z0-9$]+)\(',
         r"\.sig\|\|(?P<sig>[a-zA-Z0-9$]+)\(",
@@ -120,7 +132,9 @@ def get_initial_function_name(js: str) -> str:
             logger.debug("finished regex search, matched: %s", pattern)
             return function_match.group(1)
 
-    raise RegexMatchError(caller="get_initial_function_name", pattern="multiple")
+    raise RegexMatchError(
+        caller="get_initial_function_name", pattern="multiple"
+    )
 
 
 def get_transform_plan(js: str) -> List[str]:
@@ -211,7 +225,7 @@ def reverse(arr: List, _: Optional[Any]):
 
     .. code-block:: javascript
 
-       function(a, b) { a.reverse() }
+        function(a, b) { a.reverse() }
 
     This method takes an unused ``b`` variable as their transform functions
     universally sent two arguments.
@@ -231,14 +245,14 @@ def splice(arr: List, b: int):
 
     .. code-block:: javascript
 
-       function(a, b) { a.splice(0, b) }
+        function(a, b) { a.splice(0, b) }
 
     **Example**:
 
     >>> splice([1, 2, 3, 4], 2)
     [1, 2]
     """
-    return arr[:b] + arr[b * 2 :]
+    return arr[b:]
 
 
 def swap(arr: List, b: int):
@@ -248,7 +262,7 @@ def swap(arr: List, b: int):
 
     .. code-block:: javascript
 
-       function(a, b) { var c=a[0];a[0]=a[b%a.length];a[b]=c }
+        function(a, b) { var c=a[0];a[0]=a[b%a.length];a[b]=c }
 
     **Example**:
 
@@ -264,7 +278,6 @@ def map_functions(js_func: str) -> Callable:
 
     :param str js_func:
         The JavaScript version of the transform function.
-
     """
     mapper = (
         # function(a){a.reverse()}

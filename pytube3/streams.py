@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 This module contains a container for stream manifest data.
 
@@ -8,15 +6,14 @@ combined). This was referred to as ``Video`` in the legacy pytube version, but
 has been renamed to accommodate DASH (which serves the audio and video
 separately).
 """
-
-from datetime import datetime
 import logging
 import os
-from typing import Dict, Tuple, Optional, BinaryIO
+from datetime import datetime
+from typing import BinaryIO, Dict, Optional, Tuple
+from urllib.error import HTTPError
 from urllib.parse import parse_qs
 
-from pytube3 import extract
-from pytube3 import request
+from pytube3 import extract, request
 from pytube3.helpers import safe_filename, target_directory
 from pytube3.itags import get_format_profile
 from pytube3.monostate import Monostate
@@ -27,7 +24,9 @@ logger = logging.getLogger(__name__)
 class Stream:
     """Container for stream manifest data."""
 
-    def __init__(self, stream: Dict, player_config_args: Dict, monostate: Monostate):
+    def __init__(
+        self, stream: Dict, player_config_args: Dict, monostate: Monostate
+    ):
         """Construct a :class:`Stream <Stream>`.
 
         :param dict stream:
@@ -44,7 +43,9 @@ class Stream:
         self._monostate = monostate
 
         self.url = stream["url"]  # signed download url
-        self.itag = int(stream["itag"])  # stream format id (youtube nomenclature)
+        self.itag = int(
+            stream["itag"]
+        )  # stream format id (youtube nomenclature)
 
         # set type and codec info
 
@@ -68,8 +69,12 @@ class Stream:
         itag_profile = get_format_profile(self.itag)
         self.is_dash = itag_profile["is_dash"]
         self.abr = itag_profile["abr"]  # average bitrate (audio streams only)
-        self.fps = itag_profile["fps"]  # frames per second (video streams only)
-        self.resolution = itag_profile["resolution"]  # resolution (e.g.: "480p")
+        self.fps = stream[
+            "fps"
+        ]  # frames per second (video streams only)
+        self.resolution = itag_profile[
+            "resolution"
+        ]  # resolution (e.g.: "480p")
         self.is_3d = itag_profile["is_3d"]
         self.is_hdr = itag_profile["is_hdr"]
         self.is_live = itag_profile["is_live"]
@@ -143,7 +148,12 @@ class Stream:
             Filesize (in bytes) of the stream.
         """
         if self._filesize is None:
-            self._filesize = request.filesize(self.url)
+            try:
+                self._filesize = request.filesize(self.url)
+            except HTTPError as e:
+                if e.code != 404:
+                    raise
+                self._filesize = request.seq_filesize(self.url)
         return self._filesize
 
     @property
@@ -167,7 +177,9 @@ class Stream:
         """
         if self._monostate.duration and self.bitrate:
             bits_in_byte = 8
-            return int((self._monostate.duration * self.bitrate) / bits_in_byte)
+            return int(
+                (self._monostate.duration * self.bitrate) / bits_in_byte
+            )
 
         return self.filesize
 
@@ -193,6 +205,8 @@ class Stream:
         filename: Optional[str] = None,
         filename_prefix: Optional[str] = None,
         skip_existing: bool = True,
+        timeout: Optional[int] = None,
+        max_retries: Optional[int] = 0
     ) -> str:
         """Write the media stream to disk.
 
@@ -212,33 +226,57 @@ class Stream:
             filename but still add a prefix.
         :type filename_prefix: str or None
         :param skip_existing:
-            (optional) skip existing files, defaults to True
+            (optional) Skip existing files, defaults to True
         :type skip_existing: bool
+        :param timeout:
+            (optional) Request timeout length in seconds. Uses system default.
+        :type timeout: int
+        :param max_retries:
+            (optional) Number of retries to attempt after socket timeout. Defaults to 0.
+        :type max_retries: int
         :returns:
             Path to the saved video
         :rtype: str
 
         """
         file_path = self.get_file_path(
-            filename=filename, output_path=output_path, filename_prefix=filename_prefix
+            filename=filename,
+            output_path=output_path,
+            filename_prefix=filename_prefix,
         )
 
         if skip_existing and self.exists_at_path(file_path):
-            logger.debug("file %s already exists, skipping", file_path)
+            logger.debug(f'file {file_path} already exists, skipping')
             self.on_complete(file_path)
             return file_path
 
         bytes_remaining = self.filesize
-        logger.debug(
-            "downloading (%s total bytes) file to %s", self.filesize, file_path,
-        )
+        logger.debug(f'downloading ({self.filesize} total bytes) file to {file_path}')
 
         with open(file_path, "wb") as fh:
-            for chunk in request.stream(self.url):
-                # reduce the (bytes) remainder by the length of the chunk.
-                bytes_remaining -= len(chunk)
-                # send to the on_progress callback.
-                self.on_progress(chunk, fh, bytes_remaining)
+            try:
+                for chunk in request.stream(
+                    self.url,
+                    timeout=timeout,
+                    max_retries=max_retries
+                ):
+                    # reduce the (bytes) remainder by the length of the chunk.
+                    bytes_remaining -= len(chunk)
+                    # send to the on_progress callback.
+                    self.on_progress(chunk, fh, bytes_remaining)
+            except HTTPError as e:
+                if e.code != 404:
+                    raise
+                # Some adaptive streams need to be requested with sequence numbers
+                for chunk in request.seq_stream(
+                    self.url,
+                    timeout=timeout,
+                    max_retries=max_retries
+                ):
+                    # reduce the (bytes) remainder by the length of the chunk.
+                    bytes_remaining -= len(chunk)
+                    # send to the on_progress callback.
+                    self.on_progress(chunk, fh, bytes_remaining)
         self.on_complete(file_path)
         return file_path
 
@@ -257,7 +295,10 @@ class Stream:
         return os.path.join(target_directory(output_path), filename)
 
     def exists_at_path(self, file_path: str) -> bool:
-        return os.path.isfile(file_path) and os.path.getsize(file_path) == self.filesize
+        return (
+            os.path.isfile(file_path)
+            and os.path.getsize(file_path) == self.filesize
+        )
 
     def stream_to_buffer(self, buffer: BinaryIO) -> None:
         """Write the media stream to buffer
@@ -276,7 +317,9 @@ class Stream:
             self.on_progress(chunk, buffer, bytes_remaining)
         self.on_complete(None)
 
-    def on_progress(self, chunk: bytes, file_handler: BinaryIO, bytes_remaining: int):
+    def on_progress(
+        self, chunk: bytes, file_handler: BinaryIO, bytes_remaining: int
+    ):
         """On progress callback function.
 
         This function writes the binary data to the file, then checks if an

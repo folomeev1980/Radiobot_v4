@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 import math
 import os
 import time
 import xml.etree.ElementTree as ElementTree
-from typing import Dict, Optional
-from pytube3 import request
 from html import unescape
+from typing import Dict, Optional
+
+from pytube3 import request
 from pytube3.helpers import safe_filename, target_directory
 
 
@@ -20,7 +20,12 @@ class Caption:
         """
         self.url = caption_track.get("baseUrl")
         self.name = caption_track["name"]["simpleText"]
-        self.code = caption_track["languageCode"]
+        # Use "vssId" instead of "languageCode", fix issue #779
+        self.code = caption_track["vssId"]
+        # Remove preceding '.' for backwards compatibility, e.g.:
+        # English -> vssId: .en, languageCode: en
+        # English (auto-generated) -> vssId: a.en, languageCode: en
+        self.code = self.code.strip('.')
 
     @property
     def xml_captions(self) -> str:
@@ -61,7 +66,10 @@ class Caption:
         for i, child in enumerate(list(root)):
             text = child.text or ""
             caption = unescape(text.replace("\n", " ").replace("  ", " "),)
-            duration = float(child.attrib["dur"])
+            try:
+                duration = float(child.attrib["dur"])
+            except KeyError:
+                duration = 0.0
             start = float(child.attrib["start"])
             end = start + duration
             sequence_number = i + 1  # convert from 0-indexed to 1.
