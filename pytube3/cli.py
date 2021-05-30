@@ -11,12 +11,12 @@ import os
 import shutil
 import sys
 import subprocess  # nosec
-from typing import List, Optional
+from typing import Any, Optional, List
 
-from converter import __version__, CaptionQuery, Stream, Playlist
-from converter import YouTube
-from converter.exceptions import PytubeError
-from converter.helpers import safe_filename, setup_logger
+from pytube3 import __version__, CaptionQuery, Stream, Playlist
+from pytube3 import YouTube
+from pytube3.exceptions import PytubeError
+from pytube3.helpers import safe_filename, setup_logger
 
 
 def main():
@@ -88,7 +88,7 @@ def _parse_args(
         "--list",
         action="store_true",
         help=(
-            "The list option causes converter cli to return a list of streams "
+            "The list option causes pytube cli to return a list of streams "
             "available to download"
         ),
     )
@@ -210,7 +210,7 @@ def display_progress_bar(
 
 # noinspection PyUnusedLocal
 def on_progress(
-    stream: Stream, chunk: bytes, bytes_remaining: int
+    stream: Any, chunk: bytes, bytes_remaining: int
 ) -> None:  # pylint: disable=W0613
     filesize = stream.filesize
     bytes_received = filesize - bytes_remaining

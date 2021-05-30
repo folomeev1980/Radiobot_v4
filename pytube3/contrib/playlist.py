@@ -10,8 +10,8 @@ from typing import List, Optional, Iterable, Dict, Union
 from urllib.parse import parse_qs
 from collections.abc import Sequence
 
-from pytube3 import request, YouTube
-from pytube3.helpers import cache, deprecated, install_proxy, uniqueify
+from pytube import request, YouTube
+from pytube.helpers import cache, deprecated, install_proxy, uniqueify
 
 logger = logging.getLogger(__name__)
 

@@ -3,13 +3,10 @@ import math
 import os
 import time
 import xml.etree.ElementTree as ElementTree
-from html import unescape
-from typing import Dict
-from typing import Optional
-
+from typing import Dict, Optional
 from pytube3 import request
-from pytube3.helpers import safe_filename
-from pytube3.helpers import target_directory
+from html import unescape
+from pytube3.helpers import safe_filename, target_directory
 
 
 class Caption:
@@ -23,12 +20,7 @@ class Caption:
         """
         self.url = caption_track.get("baseUrl")
         self.name = caption_track["name"]["simpleText"]
-        # Use "vssId" instead of "languageCode", fix issue #779
-        self.code = caption_track["vssId"]
-        # Remove preceding '.' for backwards compatibility, e.g.:
-        # English -> vssId: .en, languageCode: en
-        # English (auto-generated) -> vssId: a.en, languageCode: en
-        self.code = self.code.strip('.')
+        self.code = caption_track["languageCode"]
 
     @property
     def xml_captions(self) -> str:
@@ -38,7 +30,7 @@ class Caption:
     def generate_srt_captions(self) -> str:
         """Generate "SubRip Subtitle" captions.
 
-        Takes the xml captions from :meth:`~converter.Caption.xml_captions` and
+        Takes the xml captions from :meth:`~pytube.Caption.xml_captions` and
         recompiles them into the "SubRip Subtitle" format.
         """
         return self.xml_caption_to_srt(self.xml_captions)
