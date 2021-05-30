@@ -149,12 +149,12 @@ class YouTube:
 
         # If the js_url doesn't match the cached url, fetch the new js and update
         #  the cache; otherwise, load the cache.
-        if pytube.__js_url__ != self.js_url:
+        if pytube3.__js_url__ != self.js_url:
             self._js = request.get(self.js_url)
-            pytube.__js__ = self._js
-            pytube.__js_url__ = self.js_url
+            pytube3.__js__ = self._js
+            pytube3.__js_url__ = self.js_url
         else:
-            self._js = pytube.__js__
+            self._js = pytube3.__js__
 
         return self._js
 
@@ -278,7 +278,7 @@ class YouTube:
         return dict(parse_qsl(self.vid_info_raw))
 
     @property
-    def caption_tracks(self) -> List[pytube.Caption]:
+    def caption_tracks(self) -> List[pytube3.Caption]:
         """Get a list of :class:`Caption <Caption>`.
 
         :rtype: List[Caption]
@@ -288,15 +288,15 @@ class YouTube:
             .get("playerCaptionsTracklistRenderer", {})
             .get("captionTracks", [])
         )
-        return [pytube.Caption(track) for track in raw_tracks]
+        return [pytube3.Caption(track) for track in raw_tracks]
 
     @property
-    def captions(self) -> pytube.CaptionQuery:
+    def captions(self) -> pytube3.CaptionQuery:
         """Interface to query caption tracks.
 
         :rtype: :class:`CaptionQuery <CaptionQuery>`.
         """
-        return pytube.CaptionQuery(self.caption_tracks)
+        return pytube3.CaptionQuery(self.caption_tracks)
 
     @property
     def streams(self) -> StreamQuery:
