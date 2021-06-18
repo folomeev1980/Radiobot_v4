@@ -36,8 +36,6 @@ class YouTube:
 
         :param str url:
             A valid YouTube watch URL.
-        :param bool defer_prefetch_init:
-            Defers executing any network requests.
         :param func on_progress_callback:
             (Optional) User defined callback function for stream download
             progress events.
@@ -149,12 +147,12 @@ class YouTube:
 
         # If the js_url doesn't match the cached url, fetch the new js and update
         #  the cache; otherwise, load the cache.
-        if pytube3.__js_url__ != self.js_url:
+        if pytube.__js_url__ != self.js_url:
             self._js = request.get(self.js_url)
-            pytube3.__js__ = self._js
-            pytube3.__js_url__ = self.js_url
+            pytube.__js__ = self._js
+            pytube.__js_url__ = self.js_url
         else:
-            self._js = pytube3.__js__
+            self._js = pytube.__js__
 
         return self._js
 
@@ -268,6 +266,8 @@ class YouTube:
             elif status == 'ERROR':
                 if reason == 'Video unavailable':
                     raise exceptions.VideoUnavailable(video_id=self.video_id)
+            elif status == 'LIVE_STREAM':
+                raise exceptions.LiveStreamError(video_id=self.video_id)
 
     @property
     def vid_info(self):
@@ -278,7 +278,7 @@ class YouTube:
         return dict(parse_qsl(self.vid_info_raw))
 
     @property
-    def caption_tracks(self) -> List[pytube3.Caption]:
+    def caption_tracks(self) -> List[pytube.Caption]:
         """Get a list of :class:`Caption <Caption>`.
 
         :rtype: List[Caption]
@@ -288,15 +288,15 @@ class YouTube:
             .get("playerCaptionsTracklistRenderer", {})
             .get("captionTracks", [])
         )
-        return [pytube3.Caption(track) for track in raw_tracks]
+        return [pytube.Caption(track) for track in raw_tracks]
 
     @property
-    def captions(self) -> pytube3.CaptionQuery:
+    def captions(self) -> pytube.CaptionQuery:
         """Interface to query caption tracks.
 
         :rtype: :class:`CaptionQuery <CaptionQuery>`.
         """
-        return pytube3.CaptionQuery(self.caption_tracks)
+        return pytube.CaptionQuery(self.caption_tracks)
 
     @property
     def streams(self) -> StreamQuery:
@@ -418,6 +418,7 @@ class YouTube:
     @property
     def keywords(self) -> List[str]:
         """Get the video keywords.
+
         :rtype: List[str]
         """
         return self.player_response.get('videoDetails', {}).get('keywords', [])
@@ -425,6 +426,7 @@ class YouTube:
     @property
     def channel_id(self) -> str:
         """Get the video poster's channel id.
+
         :rtype: str
         """
         return self.player_response.get('videoDetails', {}).get('channelId', None)
@@ -432,6 +434,7 @@ class YouTube:
     @property
     def channel_url(self) -> str:
         """Construct the channel url for the video's poster from the channel id.
+
         :rtype: str
         """
         return f'https://www.youtube.com/channel/{self.channel_id}'
