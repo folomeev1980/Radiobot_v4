@@ -1,8 +1,8 @@
 import os
 import re
 import time
-import converter
-from pytube3.__main__ import YouTube
+from api import Api
+from pytube import YouTube
 
 
 
@@ -19,9 +19,8 @@ def convert_low32(filename):
         os.remove('output.mp3')
     except FileNotFoundError:
         pass
-
     time.sleep(15)
-    api = converter.Api('yW5eTpoFJKgINxd7wpdeBdlsl1T5OyWlQ9xMrGyVkRJbxRwHWKpJYNQuz36P7KPY')
+    api = Api('yW5eTpoFJKgINxd7wpdeBdlsl1T5OyWlQ9xMrGyVkRJbxRwHWKpJYNQuz36P7KPY')
     process = api.convert({
         "inputformat": "webm",
         "outputformat": "mp3",
