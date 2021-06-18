@@ -599,7 +599,7 @@ def metadata(initial_data) -> Optional[YouTubeMetadata]:
     e.g.:
     [
         {
-            'Song': 'к°•л‚ЁмЉ¤нѓЂмќј(Gangnam Style)',
+            'Song': '강남스타일(Gangnam Style)',
             'Artist': 'PSY',
             'Album': 'PSY SIX RULES Pt.1',
             'Licensed to YouTube by': 'YG Entertainment Inc. [...]'
