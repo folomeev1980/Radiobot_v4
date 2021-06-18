@@ -4,4 +4,3 @@ telebot
 python-telegram-bot
 typing-extensions
 browser_cookie3
-pytube==10.8.4
