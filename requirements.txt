@@ -3,4 +3,4 @@ telebot
 python-telegram-bot
 typing-extensions
 browser_cookie3
-
+requests==2.25.1
