@@ -2,7 +2,7 @@ import os
 import config
 import logging
 import  time
-from pytube import YouTube as YouTube3
+from pytube3.__main__ import YouTube as YouTube3
 import re
 import time
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
