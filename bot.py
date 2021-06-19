@@ -8,7 +8,7 @@ import time
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 
 TOKEN = os.environ.get("TOKEN", '574990729:AAHvFVDSNg-LQ5RUSaPdbiQ2pOdDA7XI5Xc')
-PORT = int(os.environ.get('PORT', '5000'))
+PORT = int(os.environ.get('PORT', '8443'))
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
