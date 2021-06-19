@@ -1,2 +1,2 @@
 python-telegram-bot
-pytube==10.8.4
+pytube==10.8.5
