@@ -1,0 +1,7 @@
+pyTelegramBotAPI
+requests
+telebot
+python-telegram-bot
+typing-extensions
+browser_cookie3
+
