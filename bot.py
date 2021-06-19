@@ -14,10 +14,6 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-
-
-
-
 def link(update, context):
     try:
         if len(re.findall(r'(https?://[^\s]+)', update.message.text)) > 0:
