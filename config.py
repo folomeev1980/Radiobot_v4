@@ -12,32 +12,36 @@ help = "Привет Это RadioBot, для скачивания mp3 c youtube:
 
 
 
-def convert_low32(filename):
-    time.sleep(15)
+# def convert_low32(filename):
+#     time.sleep(15)
+#
+#     try:
+#         os.remove('output.mp3')
+#     except FileNotFoundError:
+#         pass
+#
+#     time.sleep(15)
+#     api = converter.Api('yW5eTpoFJKgINxd7wpdeBdlsl1T5OyWlQ9xMrGyVkRJbxRwHWKpJYNQuz36P7KPY')
+#     process = api.convert({
+#         "inputformat": "webm",
+#         "outputformat": "mp3",
+#         "input": "upload",
+#         "converteroptions": {
+#             "audio_bitrate": 32,
+#             "audio_frequency": "44100",
+#             "audio_codec": "MP3",
+#             "audio_qscale": -1,
+#
+#         },
+#         "file": open(filename, 'rb')
+#     })
+#     process.wait()
+#
+#     process.download('output.mp3')
 
-    try:
-        os.remove('output.mp3')
-    except FileNotFoundError:
-        pass
 
-    time.sleep(15)
-    api = converter.Api('yW5eTpoFJKgINxd7wpdeBdlsl1T5OyWlQ9xMrGyVkRJbxRwHWKpJYNQuz36P7KPY')
-    process = api.convert({
-        "inputformat": "webm",
-        "outputformat": "mp3",
-        "input": "upload",
-        "converteroptions": {
-            "audio_bitrate": 32,
-            "audio_frequency": "44100",
-            "audio_codec": "MP3",
-            "audio_qscale": -1,
 
-        },
-        "file": open(filename, 'rb')
-    })
-    process.wait()
 
-    process.download('output.mp3')
 
 
 def remove_html_markup(s):
