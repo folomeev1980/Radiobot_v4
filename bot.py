@@ -16,7 +16,7 @@ TOKEN = '574990729:AAHvFVDSNg-LQ5RUSaPdbiQ2pOdDA7XI5Xc'
 
 
 import os
-PORT = int(os.environ.get('PORT', 5000))
+PORT = int(os.environ.get('PORT', 443))
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
