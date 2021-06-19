@@ -1,117 +1,70 @@
-import os
-import config
-import logging
-import  time
-from pytube3.__main__ import YouTube as YouTube3
-import re
-import time
-from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 
-TOKEN = os.environ.get("TOKEN", '574990729:AAHvFVDSNg-LQ5RUSaPdbiQ2pOdDA7XI5Xc')
-PORT = int(os.environ.get('PORT', '5000'))
+"""
+Simple Bot to reply to Telegram messages taken from the python-telegram-bot examples.
+Deployed using heroku.
+Author: liuhh02 https://medium.com/@liuhh02
+"""
+
+import logging
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import os
+PORT = int(os.environ.get('PORT', 5000))
+
+# Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
+TOKEN = '574990729:AAHvFVDSNg-LQ5RUSaPdbiQ2pOdDA7XI5Xc'
 
+# Define a few command handlers. These usually take the two arguments update and
+# context. Error handlers also receive the raised TelegramError object in error.
+def start(update, context):
+    """Send a message when the command /start is issued."""
+    update.message.reply_text('Hi!')
 
+def help(update, context):
+    """Send a message when the command /help is issued."""
+    update.message.reply_text('Help!')
 
-
-
-def link(update, context):
-    try:
-        if len(re.findall(r'(https?://[^\s]+)', update.message.text)) > 0:
-
-            config.remove_files()
-            mp3_link = config.youtube_link(update.message.text)
-
-            yt = YouTube3(mp3_link)
-
-            filename = "input.webm"
-            titl = str(yt.title)[0:35]
-            audio = yt.streams.filter(only_audio=True, file_extension="webm")[0]
-            #update.message.reply_text("\n....Начало скачивания....")
-            audio.download(filename='input')
-
-            update.message.reply_text("Начало конвертации: " + config.file_size(filename))
-
-            #----------------------------------------------------------------------------------
-            # config.convert_low32(filename)
-            # update.message.reply_text("Конец конвертации: " + config.file_size('output.mp3'))
-            # context.bot.send_chat_action(update.message.chat.id, 'upload_audio')
-            # audio = open("output.mp3", 'rb')
-            #----------------------------------------------------------------------------------
-
-            # config.convert_low32(filename)
-            update.message.reply_text("Конец конвертации: " + config.file_size('input.webm'))
-            context.bot.send_chat_action(update.message.chat.id, 'upload_audio')
-            audio = open("input.webm", 'rb')
-
-            context.bot.send_audio(update.message.chat.id, audio, title=titl)
-
-
-
-
-
-        else:
-            print(update.message.chat.id)
-            update.message.reply_text(config.help)
-
-    except Exception as ex:
-        update.message.reply_text("Error <<<{}>>>>".format(str(ex)))
-
-
-def update(update, context):
-    update.message.reply_text(str(update.message))
-    
-def cicle(update, context):
-    while True:
-        print("response", os.system('ping -c 1 ' + "https://radiobot3.herokuapp.com/"))
-        time.sleep(20 * 60)
-
-
+def echo(update, context):
+    """Echo the user message."""
+    update.message.reply_text(update.message.text)
 
 def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
-
-
 def main():
-  
+    """Start the bot."""
+    # Create the Updater and pass it your bot's token.
+    # Make sure to set use_context=True to use the new context based callbacks
+    # Post version 12 this will no longer be necessary
     updater = Updater(TOKEN, use_context=True)
-    dispatcher = updater.dispatcher
 
-   
+    # Get the dispatcher to register handlers
+    dp = updater.dispatcher
 
-    dispatcher.add_error_handler(error)
-    
-     #    Commands
-    
-    
-    update_handler = CommandHandler('update', update)
-    dispatcher.add_handler(update_handler)
+    # on different commands - answer in Telegram
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("help", help))
 
-    #    Messages
+    # on noncommand i.e message - echo the message on Telegram
+    dp.add_handler(MessageHandler(Filters.text, echo))
 
-    link_handler = MessageHandler(Filters.text, link)
-    dispatcher.add_handler(link_handler)
-    
-    cicle_handler = MessageHandler(Filters.text, cicle)
-    dispatcher.add_handler(cicle_handler)
+    # log all errors
+    dp.add_error_handler(error)
 
-  
-
-    ##----------------Webhook-----------------------------
-
+    # Start the Bot
     updater.start_webhook(listen="0.0.0.0",
-                          port=PORT,
+                          port=int(PORT),
                           url_path=TOKEN)
-    updater.bot.setWebhook("https://radiobot4.herokuapp.com/" + TOKEN)
+    updater.bot.setWebhook('https://radiobot4.herokuapp.com/' + TOKEN)
+
+    # Run the bot until you press Ctrl-C or the process receives SIGINT,
+    # SIGTERM or SIGABRT. This should be used most of the time, since
+    # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
-
-        ##---------------------Webhook_end---------------------
-
 
 if __name__ == '__main__':
     main()
