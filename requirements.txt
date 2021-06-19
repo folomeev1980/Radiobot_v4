@@ -4,5 +4,5 @@ telebot
 python-telegram-bot
 typing-extensions
 browser_cookie3
-urllib3==1.26.5
+#urllib3==1.26.5
 
