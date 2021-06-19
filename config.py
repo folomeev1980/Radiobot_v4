@@ -4,12 +4,8 @@ import time
 import converter
 from pytube import YouTube
 
-
-
 help = "Привет Это RadioBot, для скачивания mp3 c youtube:\n\n\
 Пожалуйста, введите ссылку на видео, вида:  https:.......... ?"
-
-
 
 
 def convert_low32(filename):
@@ -38,10 +34,6 @@ def convert_low32(filename):
     process.wait()
 
     process.download('output.mp3')
-
-
-
-
 
 
 def remove_html_markup(s):
@@ -93,137 +85,6 @@ def youtube_link(message_text):
     return mp3_link
 
 
-def youtube_download_test(mp3_link):
-    yt = YouTube(mp3_link)
-
-    f = yt.streams.filter(only_audio=True).all()
-    flag = False
-    a = "50kbps"
-
-    for i in f:
-
-        if (str(i)[48:54]) == a:
-            flag = True
-            i.download(filename='input')
-
-            filename = "input." + "webm"
-            return filename
-    if flag == False:
-        return "No audo with 50kbps"
-
-
-def youtube_download_min(mp3_link):
-    yt = YouTube(mp3_link)
-    fl = True
-
-    # while fl:
-    #     try:
-    f = yt.streams.filter(only_audio=True).all()
-        #     fl = True
-        # except:
-        #     fl = True
-
-    start = int((re.search('abr=.(.*)kbps', str(f[0])).group(1)))
-    for i in range(0, len(f), 1):
-        a = str(f[i])
-        b = int((re.search('abr=.(.*)kbps', a).group(1)))
-        if b < start:
-            start = b
-            f[i].download(filename='input')
-            rash = str((re.search('audio/(.*).', str(f[i])).group(1)))
-            filename = "input." + rash
-            return filename
-        # else:
-        #     f[i].download(filename='input')
-        #     rash = str((re.search('audio/(.*).', str(f[i])).group(1)))
-        #     filename = "input." + rash
-        #     return filename
-
-
-def downloader(object):
-    # yt = YouTube(mp3_link)
-    # fl = True
-    #
-    # # while fl:
-    # #     try:
-    # f = yt.streams.filter(only_audio=True).all()
-        #     fl = True
-        # except:
-        #     fl = True
-
-    # start = int((re.search('abr=.(.*)kbps', str(f[0])).group(1)))
-    # for i in range(0, len(f), 1):
-    #     a = str(f[i])
-    #     b = int((re.search('abr=.(.*)kbps', a).group(1)))
-    #     if b < start:
-    #         start = b
-    object.download(filename='input')
-    # rash = str((re.search('audio/(.*).', str(f[i])).group(1)))
-    # filename = "input." + rash
-    #return filename
-
-
-
-
-def youtube_filename_min(mp3_link):
-    yt = YouTube(mp3_link)
-
-    f = yt.streams.filter(only_audio=True).all()
-    start = int((re.search('abr=.(.*)kbps', str(f[0])).group(1)))
-    for i in range(0, len(f), 1):
-        a = str(f[i])
-        b = int((re.search('abr=.(.*)kbps', a).group(1)))
-        if b < start:
-            start = b
-            rash = str((re.search('audio/(.*)" abr=', str(f[i])).group(1)))
-            filename = "input." + rash
-            return filename
-        # else:
-        #     rash = str((re.search('audio/(.*)" abr=', str(f[i])).group(1)))
-        #     filename = "input." + rash
-        #     return filename
-
-
-def youtube_bitrate_min(mp3_link):
-    yt = YouTube(mp3_link)
-    f = yt.streams.filter(only_audio=True).all()
-    start = int((re.search('abr=.(.*)kbps', str(f[0])).group(1)))
-    for i in range(0, len(f), 1):
-        a = str(f[i])
-        b = int((re.search('abr=.(.*)kbps', a).group(1)))
-        if b < start:
-            start = b
-            return start
-        # else:
-        #     return start
-
-
-def youtube_size_min(mp3_link):
-    yt = YouTube(mp3_link)
-    f = yt.streams.filter(only_audio=True).all()
-    start = int((re.search('abr=.(.*)kbps', str(f[0])).group(1)))
-    for i in range(0, len(f), 1):
-        a = str(f[i])
-        b = int((re.search('abr=.(.*)kbps', a).group(1)))
-        if b < start:
-            start = b
-            size = f[i].filesize
-            return int(size)
-        # else:
-        #     size = f[i].filesize
-        #     return int(size)
-
-
-def tutle(mp3_link):
-    return YouTube(mp3_link).title
-
-
-def bitrate(mp3_link):
-    yt = YouTube(mp3_link)
-    f = yt.streams.filter(only_audio=True, ).all()
-    return f
-
-
 def remove_files():
     if os.path.exists('input.webm'):
         os.remove('input.webm')
@@ -238,16 +99,5 @@ def remove_files():
         print('Нет файлов для удаления')
 
 
-def youtube_bitrate_next(mp3_link):
-    yt = YouTube(mp3_link)
-    f = yt.streams.filter(only_audio=True).all()
-    start = int((re.search('abr=.(.*)kbps', str(f[0])).group(1)))
-    for i in f:
-
-        if int((re.search('abr=.(.*)kbps', str(i)).group(1))) > start:
-            start = int((re.search('abr=.(.*)kbps', i).group(1)))
-    return start
-
-
 if __name__ == '__main__':
-    print(youtube_bitrate_next("https://www.youtube.com/watch?v=4uQHLw-JMgA"))
+    pass
