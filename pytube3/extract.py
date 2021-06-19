@@ -134,6 +134,8 @@ def playability_status(watch_html: str) -> (str, str):
     """
     player_response = initial_player_response(watch_html)
     status_dict = player_response.get('playabilityStatus', {})
+    if 'liveStreamability' in status_dict:
+        return 'LIVE_STREAM', 'Video is a live stream.'
     if 'status' in status_dict:
         if 'reason' in status_dict:
             return status_dict['status'], [status_dict['reason']]
@@ -185,6 +187,8 @@ def channel_name(url: str) -> str:
 
     - :samp:`https://youtube.com/c/{channel_name}/*`
     - :samp:`https://youtube.com/channel/{channel_id}/*
+    - :samp:`https://youtube.com/u/{channel_name}/*`
+    - :samp:`https://youtube.com/user/{channel_id}/*
 
     :param str url:
         A YouTube url containing a channel name.
@@ -193,16 +197,19 @@ def channel_name(url: str) -> str:
         YouTube channel name.
     """
     patterns = [
-        r"(?:\/c\/([\d\w_\-]+)(\/.*)?)",
-        r"(?:\/channel\/([\w\d_\-]+)(\/.*)?)"
+        r"(?:\/(c)\/([\d\w_\-]+)(\/.*)?)",
+        r"(?:\/(channel)\/([\w\d_\-]+)(\/.*)?)",
+        r"(?:\/(u)\/([\d\w_\-]+)(\/.*)?)",
+        r"(?:\/(user)\/([\w\d_\-]+)(\/.*)?)"
     ]
     for pattern in patterns:
         regex = re.compile(pattern)
         function_match = regex.search(url)
         if function_match:
             logger.debug("finished regex search, matched: %s", pattern)
-            channel_id = function_match.group(1)
-            return channel_id
+            uri_style = function_match.group(1)
+            uri_identifier = function_match.group(2)
+            return f'/{uri_style}/{uri_identifier}'
 
     raise RegexMatchError(
         caller="channel_name", pattern="patterns"
@@ -228,6 +235,8 @@ def video_info_url(video_id: str, watch_url: str) -> str:
             ("eurl", quote(watch_url)),
             ("hl", "en_US"),
             ("html5", "1"),
+            ("c", "TVHTML5"),
+            ("cver", "7.20201028"),
         ]
     )
     return _video_info_url(params)
@@ -258,6 +267,8 @@ def video_info_url_age_restricted(video_id: str, embed_html: str) -> str:
             ("eurl", eurl),
             ("sts", sts),
             ("html5", "1"),
+            ("c", "TVHTML5"),
+            ("cver", "7.20201028"),
         ]
     )
     return _video_info_url(params)
