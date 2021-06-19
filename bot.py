@@ -58,18 +58,18 @@ def link(update, context):
             update.message.reply_text("Начало конвертации: " + config.file_size(filename))
 
             #--------------------------------------------------------------------------------
-            # config.convert_low32(filename)
-            # update.message.reply_text("Конец конвертации: " + config.file_size('output.mp3'))
-            # context.bot.send_chat_action(update.message.chat.id, 'upload_audio')
-            # audio = open("output.mp3", 'rb')
-            # context.bot.send_audio(update.message.chat.id, audio, title=titl)
+            config.convert_low32(filename)
+            update.message.reply_text("Конец конвертации: " + config.file_size('output.mp3'))
+            context.bot.send_chat_action(update.message.chat.id, 'upload_audio')
+            audio = open("output.mp3", 'rb')
+            context.bot.send_audio(update.message.chat.id, audio, title=titl)
             #--------------------------------------------------------------------------------
 
             # config.convert_low32(filename)
             # update.message.reply_text("Конец конвертации: " + config.file_size('output.mp3'))
-            # context.bot.send_chat_action(update.message.chat.id, 'upload_audio')
-            audio = open("input.webm", 'rb')
-            context.bot.send_audio(update.message.chat.id, audio, title=titl)
+            # # context.bot.send_chat_action(update.message.chat.id, 'upload_audio')
+            # audio = open("input.webm", 'rb')
+            # context.bot.send_audio(update.message.chat.id, audio, title=titl)
 
 
 
