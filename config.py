@@ -1,7 +1,6 @@
 import os
 import re
 import time
-import converter
 from pytube3.__main__ import YouTube
 
 
