@@ -1,4 +1,5 @@
 import json
+from requests3 import request,Session
 
 try:
     from urllib.parse import quote, unquote
@@ -8,8 +9,8 @@ except ImportError:
 
 import io
 
-from requests import request, Session
-from requests.exceptions import RequestException
+from requests3 import request, Session
+from requests3.exceptions import RequestException
 from .urlencoder import urlencode
 
 from .process import Process
