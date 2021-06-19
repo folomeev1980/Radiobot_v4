@@ -8,7 +8,7 @@ import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import config
 import re
-from pytube3 import YouTube as YouTube3
+from pytube import YouTube as YouTube3
 
 
 # Enable logging
