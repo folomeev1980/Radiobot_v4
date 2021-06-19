@@ -17,6 +17,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 TOKEN = '574990729:AAHvFVDSNg-LQ5RUSaPdbiQ2pOdDA7XI5Xc'
+app_name="radiobotv4"
 
 
 import os
@@ -104,7 +105,7 @@ def main():
     dispatcher.add_handler(link_handler)
 
     # Start the Bot
-    if not "radiobotv4":  # pooling mode
+    if not app_name:  # pooling mode
         print("Can't detect 'HEROKU_APP_NAME' env. Running bot in pooling mode.")
         print("Note: this is not a great way to deploy the bot in Heroku.")
 
@@ -112,13 +113,12 @@ def main():
         updater.idle()
 
     else:  # webhook mode
-        print(
-            f"Running bot in webhook mode. Make sure that this url is correct: https://radiobotv4.herokuapp.com/")
+        print("Running bot in webhook mode. Make sure that this url is correct: https://{}.herokuapp.com/".format(app_name))
         updater.start_webhook(
             listen="0.0.0.0",
             port=PORT,
             url_path=TOKEN,
-            webhook_url="https://{}.herokuapp.com/{}".format("radiobotv4",TOKEN)
+            webhook_url="https://{}.herokuapp.com/{}".format(app_name,TOKEN)
         )
 
         #    updater.bot.set_webhook(f"https://{HEROKU_APP_NAME}.herokuapp.com/{TELEGRAM_TOKEN}")
