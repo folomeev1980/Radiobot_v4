@@ -57,14 +57,25 @@ def main():
     dp.add_error_handler(error)
 
     # Start the Bot
-    updater.start_webhook(listen="0.0.0.0",
-                          port=int(PORT),
-                          url_path=TOKEN)
-    updater.bot.setWebhook('https://radiobotv4.herokuapp.com/' + TOKEN)
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
+    if not "radiobotv4":  # pooling mode
+        print("Can't detect 'HEROKU_APP_NAME' env. Running bot in pooling mode.")
+        print("Note: this is not a great way to deploy the bot in Heroku.")
+
+        updater.start_polling()
+        updater.idle()
+
+    else:  # webhook mode
+        print(
+            f"Running bot in webhook mode. Make sure that this url is correct: https://radiobotv4.herokuapp.com/")
+        updater.start_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+            url_path=TOKEN,
+            webhook_url="https://{}.herokuapp.com/{}".format("radiobotv4",TOKEN)
+        )
+
+        #    updater.bot.set_webhook(f"https://{HEROKU_APP_NAME}.herokuapp.com/{TELEGRAM_TOKEN}")
+        updater.idle()
 
 if __name__ == '__main__':
     main()
