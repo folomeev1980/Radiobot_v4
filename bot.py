@@ -1,7 +1,7 @@
 
 """
 Simple Bot to reply to Telegram messages taken from the python-telegram-bot examples.
-Source: https://github.com/python-telegram-bot/python-telegram-bot/blob/master/examples/echobot2.py
+Source:
 """
 
 import logging
@@ -9,6 +9,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import config
 import re
 from pytube import YouTube as YouTube3
+import os
 
 
 # Enable logging
@@ -16,7 +17,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
-TOKEN = '574990729:AAHvFVDSNg-LQ5RUSaPdbiQ2pOdDA7XI5Xc'
+#TOKEN = '574990729:AAHvFVDSNg-LQ5RUSaPdbiQ2pOdDA7XI5Xc'
+TOKEN = os.environ["TOKEN"]
 app_name="radiobotv4"
 
 
