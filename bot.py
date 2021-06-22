@@ -18,7 +18,11 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 #TOKEN = '574990729:AAHvFVDSNg-LQ5RUSaPdbiQ2pOdDA7XI5Xc'
-TOKEN = os.environ["TOKEN"]
+#TOKEN = os.environ["TOKEN"]
+TOKEN = None
+
+with open("tk.txt") as f:
+    TOKEN = f.read().strip()
 app_name="radiobotv4"
 
 
