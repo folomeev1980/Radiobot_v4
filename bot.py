@@ -21,10 +21,14 @@ logger = logging.getLogger(__name__)
 #TOKEN = os.environ["TOKEN"]
 TOKEN = None
 
-with open("tk.txt") as f:
-    TOKEN = f.read().strip()
-app_name="radiobotv4"
+# with open("tk.txt") as f:
+#     TOKEN = f.read().strip()
+#
+# app_name="radiobotv4"
 
+#import os
+
+TOKEN = os.environ["TOKEN"]
 
 import os
 PORT = int(os.environ.get('PORT', 443))
