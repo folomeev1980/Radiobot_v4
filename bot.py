@@ -24,11 +24,12 @@ TOKEN = None
 # with open("tk.txt") as f:
 #     TOKEN = f.read().strip()
 #
-# app_name="radiobotv4"
+#
 
 #import os
 
 TOKEN = os.environ["TOKEN"]
+app_name="radiobotv4"
 
 import os
 PORT = int(os.environ.get('PORT', 443))
