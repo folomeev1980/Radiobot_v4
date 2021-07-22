@@ -1,4 +1,4 @@
-from pytube3.__main__ import YouTube
+from pytube import YouTube
 
 from config import youtube_link
 import re
