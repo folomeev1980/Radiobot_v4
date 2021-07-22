@@ -5,4 +5,6 @@ yt = pytube.YouTube("https://www.youtube.com/watch?v=1WbS2P_dxOM",
 
 
 video = yt.streams[0]
-video.download(filename='C://Users//folomeev//Videos//Captures//win11')
+
+print(video)
+#video.download(filename='C://Users//folomeev//Videos//Captures//win11')
