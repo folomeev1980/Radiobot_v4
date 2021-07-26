@@ -8,6 +8,7 @@ from functools import lru_cache
 from urllib import parse
 from urllib.error import URLError
 from urllib.request import Request, urlopen
+import requests
 
 from pytube.exceptions import RegexMatchError, MaxRetriesExceeded
 from pytube.helpers import regex_search
@@ -23,7 +24,6 @@ def _execute_request(
     data=None,
     timeout=socket._GLOBAL_DEFAULT_TIMEOUT
 ):
-    import requests
     video_url = url[url.find('watch?v=') + 8:url.find('watch?v=') + 19]
     base_headers = {
         "POST": "/youtubei/v1/player HTTP/1.1",
@@ -33,8 +33,6 @@ def _execute_request(
     data = {"context":{"client":{"clientName":"ANDROID","clientVersion":"16.05"}},
     "videoId":video_url}
     return requests.post(url="https://www.youtube.com/youtubei/v1/player", headers=base_headers, json = data).text
-
-
 
 def get(url, extra_headers=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
     """Send an http GET request.
