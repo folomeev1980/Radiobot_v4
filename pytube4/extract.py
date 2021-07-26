@@ -8,11 +8,11 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import parse_qs, parse_qsl, quote, unquote, urlencode, urlparse
 
-from pytube.cipher import Cipher
-from pytube.exceptions import HTMLParseError, LiveStreamError, RegexMatchError
-from pytube.helpers import regex_search
-from pytube.metadata import YouTubeMetadata
-from pytube.parser import parse_for_object, parse_for_all_objects
+from pytube4.cipher import Cipher
+from pytube4.exceptions import HTMLParseError, LiveStreamError, RegexMatchError
+from pytube4.helpers import regex_search
+from pytube4.metadata import YouTubeMetadata
+from pytube4.parser import parse_for_object, parse_for_all_objects
 
 
 logger = logging.getLogger(__name__)

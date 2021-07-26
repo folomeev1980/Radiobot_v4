@@ -10,7 +10,7 @@ import json
 from urllib import parse
 
 # Local imports
-from pytube import request
+from pytube4 import request
 
 
 _default_clients = {

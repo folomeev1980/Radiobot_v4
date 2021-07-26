@@ -11,13 +11,13 @@ import logging
 from typing import Any, Callable, Dict, List, Optional
 from urllib.parse import parse_qsl
 
-import pytube
-import pytube.exceptions as exceptions
-from pytube import extract, request
-from pytube import Stream, StreamQuery
-from pytube.helpers import install_proxy
-from pytube.metadata import YouTubeMetadata
-from pytube.monostate import Monostate
+import pytube4
+import pytube4.exceptions as exceptions
+from pytube4 import extract, request
+from pytube4 import Stream, StreamQuery
+from pytube4.helpers import install_proxy
+from pytube4.metadata import YouTubeMetadata
+from pytube4.monostate import Monostate
 
 logger = logging.getLogger(__name__)
 

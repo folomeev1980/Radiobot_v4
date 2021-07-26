@@ -13,10 +13,10 @@ from typing import BinaryIO, Dict, Optional, Tuple
 from urllib.error import HTTPError
 from urllib.parse import parse_qs
 
-from pytube import extract, request
-from pytube.helpers import safe_filename, target_directory
-from pytube.itags import get_format_profile
-from pytube.monostate import Monostate
+from pytube4 import extract, request
+from pytube4.helpers import safe_filename, target_directory
+from pytube4.itags import get_format_profile
+from pytube4.monostate import Monostate
 
 logger = logging.getLogger(__name__)
 
