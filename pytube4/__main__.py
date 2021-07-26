@@ -150,12 +150,12 @@ class YouTube:
 
         # If the js_url doesn't match the cached url, fetch the new js and update
         #  the cache; otherwise, load the cache.
-        if pytube.__js_url__ != self.js_url:
+        if pytube4.__js_url__ != self.js_url:
             self._js = request.get(self.js_url)
-            pytube.__js__ = self._js
-            pytube.__js_url__ = self.js_url
+            pytube4.__js__ = self._js
+            pytube4.__js_url__ = self.js_url
         else:
-            self._js = pytube.__js__
+            self._js = pytube4.__js__
 
         return self._js
 
@@ -228,8 +228,8 @@ class YouTube:
                 # To force an update to the js file, we clear the cache and retry
                 self._js = None
                 self._js_url = None
-                pytube.__js__ = None
-                pytube.__js_url__ = None
+                pytube4.__js__ = None
+                pytube4.__js_url__ = None
                 extract.apply_signature(self.player_config_args, fmt, self.js)
 
             # build instances of :class:`Stream <Stream>`
@@ -291,7 +291,7 @@ class YouTube:
         return dict(parse_qsl(self.vid_info_raw))
 
     @property
-    def caption_tracks(self) -> List[pytube.Caption]:
+    def caption_tracks(self) -> List[pytube4.Caption]:
         """Get a list of :class:`Caption <Caption>`.
 
         :rtype: List[Caption]
@@ -301,15 +301,15 @@ class YouTube:
             .get("playerCaptionsTracklistRenderer", {})
             .get("captionTracks", [])
         )
-        return [pytube.Caption(track) for track in raw_tracks]
+        return [pytube4.Caption(track) for track in raw_tracks]
 
     @property
-    def captions(self) -> pytube.CaptionQuery:
+    def captions(self) -> pytube4.CaptionQuery:
         """Interface to query caption tracks.
 
         :rtype: :class:`CaptionQuery <CaptionQuery>`.
         """
-        return pytube.CaptionQuery(self.caption_tracks)
+        return pytube4.CaptionQuery(self.caption_tracks)
 
     @property
     def streams(self) -> StreamQuery:
