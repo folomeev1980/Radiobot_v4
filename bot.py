@@ -8,7 +8,7 @@ import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import config
 import re
-from pytube import YouTube as YouTube3
+from pytube4 import YouTube as YouTube3
 import os
 
 
