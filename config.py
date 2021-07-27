@@ -2,10 +2,24 @@ import os
 import re
 import time
 import converter
+from youtube_dl import YoutubeDL
 from pytube import YouTube
 
 help = "Привет Это RadioBot, для скачивания mp3 c youtube:\n\n\
 Пожалуйста, введите ссылку на видео, вида:  https:.......... ?"
+
+
+
+
+def get_title(video):
+
+    with YoutubeDL() as ydl:
+          info_dict = ydl.extract_info(video, download=False)
+          video_url = info_dict.get("url", None)
+          video_id = info_dict.get("id", None)
+          video_title = info_dict.get('title', None)
+    return video_title
+
 
 
 def convert_low32(filename):
