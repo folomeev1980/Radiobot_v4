@@ -64,11 +64,11 @@ def link(update, context):
             config.remove_files()
             mp3_link = config.youtube_link(update.message.text)
 
-            yt = YouTube3(mp3_link)
+            #yt = YouTube3(mp3_link)
 
             filename = "input.webm"
-            titl = str(yt.title)[0:35]
-
+            #titl = str(yt.title)[0:35]
+            title="тест"
             # audio = yt.streams.filter(only_audio=True, file_extension="webm")[0]
             # update.message.reply_text("\n....Начало скачивания....")
             # audio.download(filename='input')
