@@ -1,5 +1,15 @@
-from pytube4 import YouTube
+import os
+import sys
+import subprocess
 
-yt = YouTube('https://www.youtube.com/watch?v=LXWKNN0lPsQ')
-for i in yt.streams.filter(progressive=True, file_extension='mp4', type="video").order_by('resolution').desc():
-    print(i)
+
+#
+bashCommand = "youtube-dl --proxy 10.104.1.9:8080 -f worstaudio https://www.youtube.com/watch?v=NiPWr00iDeQ"
+#bashCommand = "youtube-dl --proxy 10.104.1.9:8080 --title https://www.youtube.com/watch?v=V_6WlQuMplg"
+#
+# process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+# output, error = process.communicate()
+
+process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
+output, error = process.communicate()
+print(output)
