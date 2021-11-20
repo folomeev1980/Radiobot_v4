@@ -18,7 +18,7 @@ def get_title(video):
           video_url = info_dict.get("url", None)
           video_id = info_dict.get("id", None)
           video_title = info_dict.get('title', None)
-    return video_title
+    return (video_title)
 
 
 
